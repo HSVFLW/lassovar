@@ -18,7 +18,7 @@ function(y,x,ada.w,degf.type=NULL,ic,mc=FALSE,ncores=1,alpha=1,dfmax,trend,lambd
 	} else {
 		if(!mc){for(i in 1:ncol(y){ all.ic[[i]]	<-.lv.eq.gn(i,y,x,ada.w,ic=ic,alpha=alpha,dfmax=dfmax,trend,lambda=lambda)}}
 		if(mc){	all.ic<-mclapply(1:ncol(y),.lv.eq.gn,y,x,ada.w,ic=ic,alpha=alpha,dfmax=dfmax,trend,mc.cores=ncores,lambda=lambda)}
-
+	}
 
 	#Sorting out the IC results
 	# This is stoooopid, and costly.
