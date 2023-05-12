@@ -22,7 +22,12 @@ function(y,x,ada.w,degf.type=NULL,ic,mc=FALSE,ncores=1,alpha=1,dfmax,trend,lambd
 
 	#Sorting out the IC results
 	# This is stoooopid, and costly.
-	for(i in 1:ncol(y)){
+	if(!is.null(col_ind)){
+		nloop <- length(col_ind)
+	} else {
+		nloop <- ncol(y)
+	}
+	for(i in 1:nloop){
 		lasso.eq$coefficients<-cbind(lasso.eq$coefficients,all.ic[[i]]$coefficients)
 		lasso.eq$RSS	<-cbind(lasso.eq$RSS,all.ic[[i]]$rss)
 		lasso.eq$lambda	<-cbind(lasso.eq$lambda,all.ic[[i]]$lambda)
