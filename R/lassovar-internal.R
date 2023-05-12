@@ -6,15 +6,18 @@
 
 # The workhorse, fits a lasso possibly adaptive given weights ada.w and selects the best model according both information criteria. 
 .lassovar.eq <-
-function(y,x,ada.w,degf.type=NULL,ic,mc=FALSE,ncores=1,alpha=1,dfmax,trend,lambda=NULL)
+function(y,x,ada.w,degf.type=NULL,ic,mc=FALSE,ncores=1,alpha=1,dfmax,trend,lambda=NULL,col_ind=NULL)
 {
 	lasso.eq	<-list('call'=match.call(),'var.names'=colnames(y),'ada.w'=ada.w,'x'=x,'y'=y,'coefficients'=NULL,'RSS'=NULL,'lambda'=NULL,'spectest'=NULL,'trend'=trend)	
 	all.ic		<-list()
-
 	
 	#Estimation with and w/o multicore
-	if(!mc){for(i in 1:ncol(y)){ all.ic[[i]]	<-.lv.eq.gn(i,y,x,ada.w,ic=ic,alpha=alpha,dfmax=dfmax,trend,lambda=lambda)}}
-	if(mc){	all.ic<-mclapply(1:ncol(y),.lv.eq.gn,y,x,ada.w,ic=ic,alpha=alpha,dfmax=dfmax,trend,mc.cores=ncores,lambda=lambda)}
+	if(col_ind != NULL){
+		if(!mc){for(i in 1:length(col_ind)){ all.ic[[i]]	<-.lv.eq.gn(i=col_ind[i],y,x,ada.w,ic=ic,alpha=alpha,dfmax=dfmax,trend,lambda=lambda)}}
+		if(mc){	all.ic<-mclapply(col_ind,.lv.eq.gn,y,x,ada.w,ic=ic,alpha=alpha,dfmax=dfmax,trend,mc.cores=ncores,lambda=lambda)}
+	} else {
+		if(!mc){for(i in 1:ncol(y){ all.ic[[i]]	<-.lv.eq.gn(i,y,x,ada.w,ic=ic,alpha=alpha,dfmax=dfmax,trend,lambda=lambda)}}
+		if(mc){	all.ic<-mclapply(1:ncol(y),.lv.eq.gn,y,x,ada.w,ic=ic,alpha=alpha,dfmax=dfmax,trend,mc.cores=ncores,lambda=lambda)}
 
 
 	#Sorting out the IC results
@@ -28,7 +31,7 @@ function(y,x,ada.w,degf.type=NULL,ic,mc=FALSE,ncores=1,alpha=1,dfmax,trend,lambd
 	rm('all.ic')
 	gc()
 
-	colnames(lasso.eq$spectest) <- colnames(y)
+	colnames(lasso.eq$spectest) <- lasso.eq$var.names
 	
 	if(is.null(ada.w))lasso.eq$estimator	<-'Lasso'
 	if(!is.null(ada.w)){lasso.eq$estimator	<-'Adaptive Lasso'}
