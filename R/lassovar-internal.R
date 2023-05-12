@@ -8,7 +8,11 @@
 .lassovar.eq <-
 function(y,x,ada.w,degf.type=NULL,ic,mc=FALSE,ncores=1,alpha=1,dfmax,trend,lambda=NULL,col_ind=NULL)
 {
-	lasso.eq	<-list('call'=match.call(),'var.names'=colnames(y),'ada.w'=ada.w,'x'=x,'y'=y,'coefficients'=NULL,'RSS'=NULL,'lambda'=NULL,'spectest'=NULL,'trend'=trend)	
+	if(!is.null(col_ind)){
+		lasso.eq	<-list('call'=match.call(),'var.names'=colnames(y)[col_ind],'ada.w'=ada.w,'x'=x,'y'=y,'coefficients'=NULL,'RSS'=NULL,'lambda'=NULL,'spectest'=NULL,'trend'=trend)	
+	} else {
+		lasso.eq 	<- list('call'=match.call(),'var.names'=colnames(y),'ada.w'=ada.w,'x'=x,'y'=y,'coefficients'=NULL,'RSS'=NULL,'lambda'=NULL,'spectest'=NULL,'trend'=trend)
+	}
 	all.ic		<-list()
 	
 	#Estimation with and w/o multicore
@@ -36,7 +40,7 @@ function(y,x,ada.w,degf.type=NULL,ic,mc=FALSE,ncores=1,alpha=1,dfmax,trend,lambd
 	rm('all.ic')
 	gc()
 
-	colnames(lasso.eq$spectest) <- ifelse(!is.null(col_ind), lasso.eq$varnames[col_ind], lasso.eq$var.names)
+	colnames(lasso.eq$spectest) <- lasso.eq$var.names
 	
 	if(is.null(ada.w))lasso.eq$estimator	<-'Lasso'
 	if(!is.null(ada.w)){lasso.eq$estimator	<-'Adaptive Lasso'}
