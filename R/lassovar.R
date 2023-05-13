@@ -69,7 +69,7 @@ lassovar<-function(dat,exo=NULL,lags=1,ic=c('BIC','AIC'),adaptive=c('none','ols'
 	y.var	<-.mkvar(dat,lags=lags,horizon=horizon,exo=exo,trend=trend)	
 	
 	if(adaptive!='none'){
-		cat('initial estimator for the adapive lasso: ',adaptive,'\n',sep='')
+		#cat('initial estimator for the adapive lasso: ',adaptive,'\n',sep='')
 		for(a in adaptive){
 			if(a=='lasso')	ada.w<-.ada.las.weights(y.var$y,y.var$x,a,ic=ic,mc=mc,ncores=ncores,dfmax=dfmax,trend=trend)
 			if(a=='ols')	ada.w<-.ada.ols.weights(y.var$y,y.var$x,a,mc=mc,ncores=ncores)
